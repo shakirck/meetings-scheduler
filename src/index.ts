@@ -1,21 +1,8 @@
-import express from 'express';
-import routes from './routes/routes';
+import app from './app';
 import {connect} from  './config/db';
-import dotenv from 'dotenv';
+import router from './routes/routes';
 import swaggerDocs from './config/swagger';
-import cors from 'cors'
-import helmet from 'helmet';
-import morgan = require('morgan');
-dotenv.config();
-const app = express();
-app.use(express.json());
-app.use(routes);
-app.use(cors({
-    origin:"*"
-}))
-app.use(helmet());
-app.use(morgan("common"))
- 
+app.use(router);
 app.listen(8080, async ()=>{
     await connect();
     swaggerDocs(app);

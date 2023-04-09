@@ -3,14 +3,18 @@
     "builds": [
         {
             "src": "build/index.js",
-            "use": "@vercel/node",
-            "config": { "includeFiles": ["build/**"] }
-        }
+            "use": "@vercel/node"
+         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "build/index.js"
+            "dest": "/build/index.js"
+        },
+        {
+            "src": "/api/.*",
+            "methods": ["GET", "POST", "PUT", "DELETE"],
+            "dest": "/build/api/$1"
         }
     ]
   }

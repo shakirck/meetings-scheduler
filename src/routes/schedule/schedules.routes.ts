@@ -4,7 +4,7 @@ import {
   meetings,
   schedule,
 } from "../../controllers/schedule.controller";
-const router = Router();
+const scheduleRouter = Router();
 
 /**
  * @openapi
@@ -71,7 +71,7 @@ const router = Router();
  *        
  * 
  */
-router.post("/", schedule);
+scheduleRouter.post("/", schedule);
 
 /**
  * @openapi
@@ -97,7 +97,7 @@ router.post("/", schedule);
  *        description: availability fetched successfully 
  * 
  */
-router.post("/availability/", availability);
+scheduleRouter.post("/availability/", availability);
 /**
  * @openapi
  * /schedule/meetings:
@@ -122,7 +122,7 @@ router.post("/availability/", availability);
  *        description: meetings fetched successfully 
  * 
  */
-router.post("/meetings/", meetings);
+scheduleRouter.post("/meetings/", meetings);
 
  
-export default router;
+export default scheduleRouter;

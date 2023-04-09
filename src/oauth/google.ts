@@ -2,12 +2,13 @@ import { OAuth2Client } from "google-auth-library";
 const { google } = require("googleapis");
 
 class Auth {
-    oauth2Client: OAuth2Client;
-   constructor() {
+  oauth2Client: OAuth2Client;
+  constructor() {
+    const redirectUrl  = "http://localhost:8080/auth/gmail/callback"
     this.oauth2Client = new google.auth.OAuth2(
       process.env.CLIENTID,
       process.env.ClIENT_SECRET,
-      "http://localhost:8080/auth/gmail/callback"
+      process.env.REDIRECT_URI || redirectUrl
     );
 
     this.oauth2Client.on("tokens", (tokens: any) => {

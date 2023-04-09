@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Auth from "../../oauth/google";
-const router = Router();
+const authrouter = Router();
 
 import User from "../../models/user";
 
@@ -15,7 +15,7 @@ import User from "../../models/user";
  *       200:
  *         description: Google login success
  */
-router.get("/login", async (req, res) => {
+authrouter.get("/login", async (req, res) => {
   const auth = new Auth();
   const scopes = ["https://www.googleapis.com/auth/calendar"];
   const url = await auth.getAuthUrl();
@@ -34,7 +34,7 @@ router.get("/login", async (req, res) => {
  *      200:
  *        description:  oauth success
  */
-router.get("/gmail/callback", async (req, res) => {
+authrouter.get("/gmail/callback", async (req, res) => {
   const code = req.query.code;
 
   if (!code) {
@@ -58,4 +58,4 @@ router.get("/gmail/callback", async (req, res) => {
   res.send("success");
 });
 
-export default router;
+export default authrouter;
