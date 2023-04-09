@@ -9,7 +9,7 @@ export const availability = async (req: Request, res: Response) => {
   try {
     const auth = new Auth();
     const client = auth.getClient();
-    const email = emailSchema.safeParse(req.params.useremail)
+    const email = emailSchema.safeParse(req.body.email)
     if(!email.success) {
       return res.status(400).json({error: email.error})
     }
@@ -18,11 +18,11 @@ export const availability = async (req: Request, res: Response) => {
       return res.send("User not found");
     }
     client.setCredentials(user.token);
-    // const {date } = req.query
-
+    const {date } = req.query
+    const newDate = dayjs(date as string).format("DD/MM/YYYY");
+    const startOfDay = dayjs(newDate).startOf("day").format();
     const calendar = google.calendar({ version: "v3", auth: client });
-    const startOfDay = dayjs().startOf("day").format();
-    const endOfDay = dayjs().endOf("day").format();
+    const endOfDay = dayjs(newDate).endOf("day").format();
 
     const requestBody = {
       requestBody: {
@@ -90,9 +90,9 @@ export const schedule = async (req: Request, res: Response) => {
 
     const calendar = google.calendar({ version: "v3", auth: client });
 
-    const { summary, description, attendees, startDateTime, endDateTime } =
+    const { summary, description, attendee, startDateTime, endDateTime } =
       req.body;
-
+    const attendees = [attendee]
     const event = {
       summary: summary,
       description: description,
@@ -128,7 +128,7 @@ export const meetings = async (req: Request, res: Response) => {
   try {
     const auth = new Auth();
     const client = auth.getClient();
-    const email = emailSchema.safeParse(req.params.useremail);
+    const email = emailSchema.safeParse(req.body.email);
     if(!email.success) {
       return res.status(400).json({error: email.error})
     }
@@ -137,12 +137,16 @@ export const meetings = async (req: Request, res: Response) => {
       return res.send("User not found");
     }
     client.setCredentials(user.token);
-    // const {date } = req.query
-
+    const {date } = req.query
+    
+    const newDate = dayjs(date as string).format("DD/MM/YYYY");
+    const startOfDay = dayjs(newDate).startOf("day").format();
+    console.log({
+      newDate,startOfDay
+    })
     const calendar = google.calendar({ version: "v3", auth: client });
-    const startOfDay = dayjs().startOf("day").format();
-    const endOfDay = dayjs().endOf("day").format();
-
+    const endOfDay = dayjs(newDate).endOf("day").format();
+ 
     const { data } = await calendar.freebusy.query({
       requestBody: {
         timeMin: startOfDay,

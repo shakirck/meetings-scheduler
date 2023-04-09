@@ -4,16 +4,36 @@ const router = Router();
 
 import User from "../../models/user";
 
+/**
+ * @openapi
+ * /auth/login:
+ *  get:
+ *     tags:
+ *     - AUTH
+ *     description: Login with google oauth
+ *     responses:
+ *       200:
+ *         description: Google login success
+ */
 router.get("/login", async (req, res) => {
   const auth = new Auth();
-  
-
   const scopes = ["https://www.googleapis.com/auth/calendar"];
   const url = await auth.getAuthUrl();
 
   res.redirect(url);
 });
 
+/**
+ * @openapi
+ * /auth/gmail/callback:
+ *  get:
+ *    tags:
+ *    - AUTH
+ *    description: callback url for google oauth , it also fetches tokens and user info from google
+ *    responses:
+ *      200:
+ *        description:  oauth success
+ */
 router.get("/gmail/callback", async (req, res) => {
   const code = req.query.code;
 
@@ -22,10 +42,8 @@ router.get("/gmail/callback", async (req, res) => {
   }
 
   const auth = new Auth();
-  console.log("code", code);
-  const data = await auth.getAccessToken(code as string);
-  console.log(data);
-  const user = await User.findOne({ email: data.email });
+   const data = await auth.getAccessToken(code as string);
+   const user = await User.findOne({ email: data.email });
   if (user) {
     user.token = data.tokens;
     await user.save();

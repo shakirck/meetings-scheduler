@@ -6,11 +6,123 @@ import {
 } from "../../controllers/schedule.controller";
 const router = Router();
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    CreateMeeting:
+ *      type: object
+ *      required:
+ *        - summary
+ *        - description
+ *        - attendee
+ *        - startDateTime
+ *        - endDateTime
+ *        - email
+ *      properties:
+ *        summary:
+ *          type: string
+ *          default: Introduction Call with John Doe
+ *        description:
+ *          type: string
+ *          default: Lets discuss the future plans and hopefully we can make a good deal
+ *        attendee:
+ *          type: string
+ *          default: useremail@gmail.com
+ *        startDateTime:
+ *          type: string
+ *          default: 2023-04-11T17:00:00+05:30
+ *        endDateTime:
+ *          type: string
+ *          default: 2023-04-11T23:30:00+05:30
+ *        email:
+ *          type: string
+ *          default: useremail@gmail.com
+ *          description: this is the host email
+ *    FetchMeetings:
+ *      type: object
+ *      required:
+ *        - email
+ *      properties:
+ *        summary:
+ *        email:
+ *          type: string
+ *          default: useremail@gmail.com
+ *          description: this is the host email
+ * 
+ */
 
-
-router.get("/availability/:useremail", availability);
+/**
+ * @openapi
+ * /schedule:
+ *  post:
+ *    tags:
+ *    - Schedule
+ *    description: schedules a meeting with a host
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/CreateMeeting'
+ *    responses:
+ *      200:
+ *        description: meeting created successfully      
+ *        
+ * 
+ */
 router.post("/", schedule);
-router.get("/meetings/:useremail", meetings);
+
+/**
+ * @openapi
+ * /schedule/availability:
+ *  post:
+ *    tags:
+ *    - Schedule
+ *    description: Fetches the availability of a user
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *         schema: 
+ *          $ref: '#/components/schemas/FetchMeetings'
+ *    parameters:
+ *      - in: query
+ *        name: date
+ *        type: string
+ *        required: true
+ *        description: date in dd-mm-yyyy format , this is the date for which we want to fetch the availability
+ *    responses:
+ *      200:
+ *        description: availability fetched successfully 
+ * 
+ */
+router.post("/availability/", availability);
+/**
+ * @openapi
+ * /schedule/meetings:
+ *  post:
+ *    tags:
+ *    - Schedule
+ *    description: Fetches the Meetings of a user
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *         schema: 
+ *          $ref: '#/components/schemas/FetchMeetings'
+ *    parameters:
+ *      - in: query
+ *        name: date
+ *        type: string
+ *        required: true
+ *        description: date in dd-mm-yyyy format , this is the date for which we want to fetch the availability
+ *    responses:
+ *      200:
+ *        description: meetings fetched successfully 
+ * 
+ */
+router.post("/meetings/", meetings);
 
  
 export default router;
