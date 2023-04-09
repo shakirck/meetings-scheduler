@@ -4,11 +4,10 @@ const { google } = require("googleapis");
 class Auth {
   oauth2Client: OAuth2Client;
   constructor() {
-    const redirectUrl  = "http://localhost:8080/auth/gmail/callback"
-    this.oauth2Client = new google.auth.OAuth2(
+     this.oauth2Client = new google.auth.OAuth2(
       process.env.CLIENTID,
       process.env.ClIENT_SECRET,
-      process.env.REDIRECT_URI || redirectUrl
+      process.env.REDIRECT_URI || ""
     );
 
     this.oauth2Client.on("tokens", (tokens: any) => {
