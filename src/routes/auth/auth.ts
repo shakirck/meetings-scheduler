@@ -35,27 +35,37 @@ authrouter.get("/login", async (req, res) => {
  *        description:  oauth success
  */
 authrouter.get("/gmail/callback", async (req, res) => {
-  const code = req.query.code;
+  try {
+    const code = req.query.code;
 
-  if (!code) {
-    res.send("error");
-  }
+    if (!code) {
+      res.send("error");
+    }
 
-  const auth = new Auth();
-   const data = await auth.getAccessToken(code as string);
-   const user = await User.findOne({ email: data.email });
-  if (user) {
-    user.token = data.tokens;
-    await user.save();
-  } else {
-    await User.create({
-      email: data.email,
-      name: data.name,
-      token: data.tokens,
+    const auth = new Auth();
+    const data = await auth.getAccessToken(code as string);
+    const user = await User.findOne({ email: data.email });
+    if (user) {
+      user.token = data.tokens;
+      await user.save();
+    } else {
+      await User.create({
+        email: data.email,
+        name: data.name,
+        token: data.tokens,
+      });
+    }
+
+    res.status(200).json({
+      message: "success",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "error",
+      error: error,
     });
   }
-
-  res.send("success");
 });
 
 export default authrouter;

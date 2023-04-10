@@ -45,24 +45,35 @@ authrouter.get("/login", (req, res) => __awaiter(void 0, void 0, void 0, functio
  *        description:  oauth success
  */
 authrouter.get("/gmail/callback", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const code = req.query.code;
-    if (!code) {
-        res.send("error");
-    }
-    const auth = new google_1.default();
-    const data = yield auth.getAccessToken(code);
-    const user = yield user_1.default.findOne({ email: data.email });
-    if (user) {
-        user.token = data.tokens;
-        yield user.save();
-    }
-    else {
-        yield user_1.default.create({
-            email: data.email,
-            name: data.name,
-            token: data.tokens,
+    try {
+        const code = req.query.code;
+        if (!code) {
+            res.send("error");
+        }
+        const auth = new google_1.default();
+        const data = yield auth.getAccessToken(code);
+        const user = yield user_1.default.findOne({ email: data.email });
+        if (user) {
+            user.token = data.tokens;
+            yield user.save();
+        }
+        else {
+            yield user_1.default.create({
+                email: data.email,
+                name: data.name,
+                token: data.tokens,
+            });
+        }
+        res.status(200).json({
+            message: "success",
+            data: data,
         });
     }
-    res.send("success");
+    catch (error) {
+        return res.status(500).json({
+            message: "error",
+            error: error,
+        });
+    }
 }));
 exports.default = authrouter;
