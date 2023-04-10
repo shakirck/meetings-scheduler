@@ -4,9 +4,19 @@ import { google } from "googleapis";
 import User from "../models/user";
 import dayjs from '../config/dayjs'
 import { z } from "zod";
+import mongoose from "mongoose";
 const emailSchema = z.string().email();
 export const availability = async (req: Request, res: Response) => {
   try {
+
+    try {
+      await mongoose.connect(process.env.MONGODB_URI|| "")
+
+  } catch (error) {   
+      console.log("Error connecting to mongo",error);
+      console.log(process.env.MONGODB_URI)
+      
+  }
     const auth = new Auth();
     const client = auth.getClient();
     const email = emailSchema.safeParse(req.body.email)
@@ -76,6 +86,15 @@ export const availability = async (req: Request, res: Response) => {
 
 export const schedule = async (req: Request, res: Response) => {
   try {
+
+    try {
+      await mongoose.connect(process.env.MONGODB_URI|| "")
+
+  } catch (error) {   
+      console.log("Error connecting to mongo",error);
+      console.log(process.env.MONGODB_URI)
+      
+  }
     const auth = new Auth();
     const client = auth.getClient();
     const email = emailSchema.safeParse(req.body.email);
@@ -126,6 +145,15 @@ export const schedule = async (req: Request, res: Response) => {
 
 export const meetings = async (req: Request, res: Response) => {
   try {
+
+    try {
+      await mongoose.connect(process.env.MONGODB_URI|| "")
+
+  } catch (error) {   
+      console.log("Error connecting to mongo",error);
+      console.log(process.env.MONGODB_URI)
+      
+  }
     const auth = new Auth();
     const client = auth.getClient();
     const email = emailSchema.safeParse(req.body.email);

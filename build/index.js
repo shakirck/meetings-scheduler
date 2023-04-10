@@ -13,12 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
-const db_1 = require("./config/db");
+const dotenv_1 = __importDefault(require("dotenv"));
 const routes_1 = __importDefault(require("./routes/routes"));
-const swagger_1 = __importDefault(require("./config/swagger"));
+const mongoose_1 = __importDefault(require("mongoose"));
+dotenv_1.default.config();
 app_1.default.use(routes_1.default);
 app_1.default.listen(8080, () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.connect)();
-    (0, swagger_1.default)(app_1.default);
+    try {
+        yield mongoose_1.default.connect(process.env.MONGODB_URI || "");
+    }
+    catch (error) {
+        console.log("Error connecting to mongo", error);
+        console.log(process.env.MONGODB_URI);
+    }
+    // swaggerDocs(app);
     console.log("Server is running on port 8080");
 }));

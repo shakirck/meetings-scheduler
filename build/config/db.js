@@ -16,5 +16,11 @@ exports.connect = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const connect = () => __awaiter(void 0, void 0, void 0, function* () {
     yield mongoose_1.default.connect(process.env.MONGO_URI || "");
+    mongoose_1.default.connection.on('connected', () => {
+        console.log("Connected to mongo instance");
+    });
+    mongoose_1.default.connection.on('error', (err) => {
+        console.log("Error connecting to mongo", err);
+    });
 });
 exports.connect = connect;

@@ -16,6 +16,7 @@ const express_1 = require("express");
 const google_1 = __importDefault(require("../../oauth/google"));
 const authrouter = (0, express_1.Router)();
 const user_1 = __importDefault(require("../../models/user"));
+const mongoose_1 = __importDefault(require("mongoose"));
 /**
  * @openapi
  * /auth/login:
@@ -33,6 +34,11 @@ authrouter.get("/login", (req, res) => __awaiter(void 0, void 0, void 0, functio
     const url = yield auth.getAuthUrl();
     res.redirect(url);
 }));
+authrouter.get("/test", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json({
+        message: "success",
+    });
+}));
 /**
  * @openapi
  * /auth/gmail/callback:
@@ -46,12 +52,25 @@ authrouter.get("/login", (req, res) => __awaiter(void 0, void 0, void 0, functio
  */
 authrouter.get("/gmail/callback", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(req.query);
         const code = req.query.code;
+        console.log(code);
         if (!code) {
-            res.send("error");
+            return res.json({
+                status: false,
+                message: "No code",
+                error: true
+            });
         }
         const auth = new google_1.default();
         const data = yield auth.getAccessToken(code);
+        try {
+            yield mongoose_1.default.connect(process.env.MONGODB_URI || "");
+        }
+        catch (error) {
+            console.log("Error connecting to mongo", error);
+            console.log(process.env.MONGODB_URI);
+        }
         const user = yield user_1.default.findOne({ email: data.email });
         if (user) {
             user.token = data.tokens;
@@ -64,13 +83,13 @@ authrouter.get("/gmail/callback", (req, res) => __awaiter(void 0, void 0, void 0
                 token: data.tokens,
             });
         }
-        res.status(200).json({
+        return res.json({
             message: "success",
             data: data,
         });
     }
     catch (error) {
-        return res.status(500).json({
+        return res.json({
             message: "error",
             error: error,
         });

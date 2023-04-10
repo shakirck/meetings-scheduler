@@ -18,10 +18,18 @@ const googleapis_1 = require("googleapis");
 const user_1 = __importDefault(require("../models/user"));
 const dayjs_1 = __importDefault(require("../config/dayjs"));
 const zod_1 = require("zod");
+const mongoose_1 = __importDefault(require("mongoose"));
 const emailSchema = zod_1.z.string().email();
 const availability = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
+        try {
+            yield mongoose_1.default.connect(process.env.MONGODB_URI || "");
+        }
+        catch (error) {
+            console.log("Error connecting to mongo", error);
+            console.log(process.env.MONGODB_URI);
+        }
         const auth = new google_1.default();
         const client = auth.getClient();
         const email = emailSchema.safeParse(req.body.email);
@@ -85,6 +93,13 @@ const availability = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.availability = availability;
 const schedule = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        try {
+            yield mongoose_1.default.connect(process.env.MONGODB_URI || "");
+        }
+        catch (error) {
+            console.log("Error connecting to mongo", error);
+            console.log(process.env.MONGODB_URI);
+        }
         const auth = new google_1.default();
         const client = auth.getClient();
         const email = emailSchema.safeParse(req.body.email);
@@ -133,6 +148,13 @@ exports.schedule = schedule;
 const meetings = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c, _d;
     try {
+        try {
+            yield mongoose_1.default.connect(process.env.MONGODB_URI || "");
+        }
+        catch (error) {
+            console.log("Error connecting to mongo", error);
+            console.log(process.env.MONGODB_URI);
+        }
         const auth = new google_1.default();
         const client = auth.getClient();
         const email = emailSchema.safeParse(req.body.email);

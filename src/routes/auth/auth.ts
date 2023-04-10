@@ -3,6 +3,7 @@ import Auth from "../../oauth/google";
 const authrouter = Router();
 
 import User from "../../models/user";
+import mongoose from "mongoose";
 
 /**
  * @openapi
@@ -22,6 +23,11 @@ authrouter.get("/login", async (req, res) => {
 
   res.redirect(url);
 });
+authrouter.get("/test", async (req, res) => {
+  res.json({
+    message: "success",
+  })
+});
 
 /**
  * @openapi
@@ -36,14 +42,28 @@ authrouter.get("/login", async (req, res) => {
  */
 authrouter.get("/gmail/callback", async (req, res) => {
   try {
+    console.log(req.query)
     const code = req.query.code;
-
+    console.log(code);
     if (!code) {
-      res.send("error");
+      return  res.json({
+        status: false,
+        message: "No code",
+        error:true
+      })
     }
 
     const auth = new Auth();
     const data = await auth.getAccessToken(code as string);
+
+    try {
+      await mongoose.connect(process.env.MONGODB_URI|| "")
+
+  } catch (error) {   
+      console.log("Error connecting to mongo",error);
+      console.log(process.env.MONGODB_URI)
+      
+  }
     const user = await User.findOne({ email: data.email });
     if (user) {
       user.token = data.tokens;
@@ -56,12 +76,12 @@ authrouter.get("/gmail/callback", async (req, res) => {
       });
     }
 
-    res.status(200).json({
+   return  res.json({
       message: "success",
       data: data,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.json({
       message: "error",
       error: error,
     });
